@@ -1,0 +1,3 @@
+[submodule "src/ts-base-lib"]
+	path = src/ts-base-lib
+	url = https://github.com/3420580499/ts-base-lib.git
