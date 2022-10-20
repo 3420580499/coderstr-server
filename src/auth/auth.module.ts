@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { UserModule } from 'src/user/user.module';
 import { AuthService } from './auth.service';
+import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
 
 const jwtModule = JwtModule.registerAsync({
@@ -19,7 +20,7 @@ const jwtModule = JwtModule.registerAsync({
 
 @Module({
   imports: [forwardRef(() => UserModule), PassportModule, jwtModule],
-  providers: [AuthService, LocalStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

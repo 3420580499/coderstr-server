@@ -28,8 +28,13 @@ export class UserController {
   @Post('/login')
   @UseGuards(AuthGuard('local'))
   async login(@Req() req) {
-    console.log('123');
     return this.authService.login(req.user);
+  }
+
+  @Get('/jwt')
+  @UseGuards(AuthGuard('jwt'))
+  getUserInfo(@Req() req) {
+    return req.user;
   }
 
   @Post('/create')

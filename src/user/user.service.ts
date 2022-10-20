@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { createQueryBuilder, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -32,7 +32,11 @@ export class UserService {
       .where('user.username=:username', { username })
       .getOne();
   }
-
+  getUser(user) {
+    return this.userRepository.findOne({
+      where: { id: user.id },
+    });
+  }
   findAll() {
     return `This action returns all user`;
   }
