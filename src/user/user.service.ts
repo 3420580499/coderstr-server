@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { createQueryBuilder, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { compareSync } from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -13,8 +14,23 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
+    const { username } = createUserDto;
+    const isExists = await this.userRepository.findOne({
+      where: { username },
+    });
+    if (isExists) {
+      throw new HttpException('用户名已存在', HttpStatus.BAD_REQUEST);
+    }
     const user = this.userRepository.create(createUserDto);
     return await this.userRepository.save(user);
+  }
+
+  async login(username: string, password: string) {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .addSelect('user.password')
+      .where('user.username=:username', { username })
+      .getOne();
   }
 
   findAll() {
