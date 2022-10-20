@@ -10,10 +10,13 @@ import { LocalStrategy } from './local.strategy';
 const jwtModule = JwtModule.registerAsync({
   inject: [ConfigService],
   useFactory: async (configService: ConfigService) => {
-    console.log(configService.get('SECRET'));
     return {
-      secret: configService.get('SECRET', 'test123456'),
-      signOptions: { expiresIn: '24h' },
+      privateKey: configService.get('privatekey'),
+      publicKey: configService.get('publickey'),
+      signOptions: {
+        expiresIn: '24h',
+        algorithm: 'RS256',
+      },
     };
   },
 });
