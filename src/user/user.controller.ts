@@ -16,15 +16,20 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Post('/login')
   @UseGuards(AuthGuard('local'))
   async login(@Req() req) {
-    return req.user;
+    console.log('123');
+    return this.authService.login(req.user);
   }
 
   @Post('/create')

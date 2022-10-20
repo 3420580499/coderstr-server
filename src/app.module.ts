@@ -19,9 +19,6 @@ import { AuthModule } from './auth/auth.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
-        console.log(configService.get('DB_HOST'));
-        console.log(configService.get('DB_PORT'));
-        console.log(configService.get('redis.port'));
         return {
           type: 'mysql', // 数据库类型
           entities: [User], // 数据表实体
