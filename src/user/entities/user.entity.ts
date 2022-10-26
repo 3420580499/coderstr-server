@@ -3,11 +3,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { hashSync } from 'bcrypt';
 import { Exclude } from 'class-transformer';
+import { Post } from 'src/posts/entities/posts.entity';
+import { Comment } from 'src/comment/entities/comment.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -34,6 +37,13 @@ export class User {
     nullable: true,
   })
   nickname: string;
+
+  @Column({
+    type: 'varchar',
+    name: 'avatar_url',
+    default: 'static/avatar_default/810727fdd6c178f4f3ac06be3c30657d.jpeg',
+  })
+  avatarUrl: string;
 
   // 查询的时候默认不返回该字段(select:false)
   @Column({
@@ -63,4 +73,10 @@ export class User {
     if (!this.password) return;
     this.password = hashSync(this.password, 10);
   }
+
+  @OneToMany(() => Post, (post) => post.author)
+  posts: Post[];
+
+  @OneToMany(() => Comment, (comment) => comment.author)
+  comments: Comment[];
 }

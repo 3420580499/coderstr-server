@@ -11,6 +11,7 @@ import {
   ClassSerializerInterceptor,
   UseGuards,
   Req,
+  UploadedFile,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -28,6 +29,7 @@ export class UserController {
   @Post('/login')
   @UseGuards(AuthGuard('local'))
   async login(@Req() req) {
+    console.log('/login');
     return this.authService.login(req.user);
   }
 

@@ -19,6 +19,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     // 不管是代码直接抛出异常还是在管道验证类中抛出的异常，都会来到这里
     // 将管道验证类抛出的异常格式 来统一处理一下
+    console.log(message);
     if (typeof message === 'string') {
       response.status(status).json({
         statusCode: status,
@@ -32,9 +33,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
         statusCode: status,
         timestamp: new Date().toISOString(),
         path: request.url,
-        error: [...message['message']],
+        error:
+          typeof message['message'] === 'string'
+            ? message['message']
+            : [...message['message']],
         success: 'false',
       });
     }
+    // 还有一个要注意的：当token过期或者token错误，登录传参的参数是不是local策略中规定的username和password时
+    //内部抛出异常 ：{status:400,error:'Unauthorized'}  //这个异常没法直接去捕获！！！
   }
 }

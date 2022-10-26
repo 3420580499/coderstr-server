@@ -40,6 +40,13 @@ export class TagController {
     return this.tagService.findAll();
   }
 
+  @Get('/search')
+  @Role('admin', 'author', 'readers')
+  searchTags(@Query() query) {
+    console.log(1234213);
+    return this.tagService.searchTags(query);
+  }
+
   @Get('/:id')
   @Role('admin', 'author', 'readers')
   findOne(@Param('id') id: string) {

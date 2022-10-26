@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { Tag } from './entities/tag.entity';
@@ -77,5 +77,19 @@ export class TagService {
       return '删除标签成功';
     }
     throw new HttpException('删除标签失败', HttpStatus.BAD_REQUEST);
+  }
+
+  async searchTags(query) {
+    return await this.tagRepository.find({
+      where: {
+        name: Like(`%${query.name}%`),
+      },
+    });
+  }
+
+  async findByIds(ids: string[]) {
+    return this.tagRepository.findBy({
+      id: In([...ids]),
+    });
   }
 }

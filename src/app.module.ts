@@ -8,6 +8,15 @@ import { UserModule } from './user/user.module';
 import envConfig from '../environment/getEnvironmentCofing';
 import { User } from './user/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
+import { TagModule } from './tag/tag.module';
+import { Tag } from './tag/entities/tag.entity';
+import { UploadModule } from './upload/upload.module';
+import { Post } from './posts/entities/posts.entity';
+import { CommentModule } from './comment/comment.module';
+import { Comment } from './comment/entities/comment.entity';
+import { SortModule } from './sort/sort.module';
+import { Sort } from './sort/entities/sort.entity';
+import { CacheModule } from './cache/cache.module';
 
 @Module({
   imports: [
@@ -21,7 +30,7 @@ import { AuthModule } from './auth/auth.module';
       useFactory: async (configService: ConfigService) => {
         return {
           type: 'mysql', // 数据库类型
-          entities: [User], // 数据表实体
+          entities: [User, Tag, Post, Comment, Sort], // 数据表实体
           host: configService.get('DB_HOST', 'localhost'), // 主机，默认为localhost
           port: configService.get<number>('DB_PORT', 3306), // 端口号
           username: configService.get('DB_USER', 'root'), // 用户名
@@ -35,6 +44,11 @@ import { AuthModule } from './auth/auth.module';
     PostsModule,
     UserModule,
     AuthModule,
+    TagModule,
+    UploadModule,
+    CommentModule,
+    SortModule,
+    CacheModule,
   ],
   controllers: [AppController],
   providers: [AppService],

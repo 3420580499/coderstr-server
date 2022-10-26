@@ -1,7 +1,9 @@
+import { Post } from 'src/posts/entities/posts.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -17,6 +19,9 @@ export class Tag {
 
   @Column()
   name: string;
+
+  @ManyToMany(() => Post, (post) => post.tags)
+  posts: Post[];
 
   @CreateDateColumn({
     type: 'timestamp',

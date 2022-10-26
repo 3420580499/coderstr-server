@@ -17,6 +17,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
   async validate(username: string, password: string): Promise<any> {
     const user = await this.authService.validateUser(username, password);
+    console.log(user);
     if (!user) throw new HttpException('用户名不存在', HttpStatus.BAD_REQUEST);
     if (!compareSync(password, user.password)) {
       throw new HttpException('密码不正确', HttpStatus.BAD_REQUEST);
