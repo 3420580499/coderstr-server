@@ -92,4 +92,57 @@ export class TagService {
       id: In([...ids]),
     });
   }
+
+  async findCount(name: string, introduce: string) {
+    const queryBuilder = this.tagRepository.createQueryBuilder('tag');
+    if (name) {
+      queryBuilder.andWhere('tag.name LIKE :name', {
+        name: `%${name}%`,
+      });
+    }
+    if (introduce) {
+      queryBuilder.andWhere('tag.introduce LIKE :introduce', {
+        introduce: `%${introduce}%`,
+      });
+    }
+    return await queryBuilder.getCount();
+  }
+
+  async findTagList(
+    currentPage: number,
+    size: number,
+    name: string,
+    introduce: string,
+  ) {
+    const queryBuilder = this.tagRepository.createQueryBuilder('tag');
+    if (name) {
+      queryBuilder.andWhere('tag.name LIKE :name', {
+        name: `%${name}%`,
+      });
+    }
+    if (introduce) {
+      queryBuilder.andWhere('tag.introduce LIKE :introduce', {
+        introduce: `%${introduce}%`,
+      });
+    }
+    return {
+      total: await this.findCount(name, introduce),
+      list: await queryBuilder
+        .skip((currentPage - 1) * size)
+        .take(size)
+        .getMany(),
+    };
+  }
+
+  async modify(updateTagDto: any) {
+    await this.tagRepository
+      .createQueryBuilder()
+      .update(Tag)
+      .set({
+        name: updateTagDto.name,
+        introduce: updateTagDto.introduce,
+      })
+      .where('id = :id', { id: updateTagDto.id })
+      .execute();
+  }
 }

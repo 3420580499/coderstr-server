@@ -15,7 +15,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-enum StatusEnum {
+// 未发布，已发布待审核，发布成功（审核成功），已驳回（审核驳回）
+export enum StatusEnum {
   DRAFT = 'draft',
   RELEASE = 'release',
   APPROVED = 'approved',
@@ -99,6 +100,9 @@ export class Post {
     name: 'user_id',
   })
   author: User;
+
+  @ManyToMany(() => User, (user) => user.postss)
+  users: User[];
 
   @OneToMany(() => Comment, (comment) => comment.post)
   comments: Comment[];

@@ -77,4 +77,6 @@ export class Comment {
     name: 'update_at',
   })
   updateAt: Date;
+
+  count: number;
 }

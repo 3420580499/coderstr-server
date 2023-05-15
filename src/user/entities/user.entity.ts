@@ -3,9 +3,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  JoinTable,
 } from 'typeorm';
 import { hashSync } from 'bcrypt';
 import { Exclude } from 'class-transformer';
@@ -16,6 +18,11 @@ export enum UserRole {
   ADMIN = 'admin',
   AUTHOR = 'author',
   READERS = 'readers',
+}
+
+export enum UserSex {
+  MAN = 0,
+  WOMAN = 1,
 }
 
 @Entity({
@@ -40,6 +47,36 @@ export class User {
 
   @Column({
     type: 'varchar',
+    length: 80,
+  })
+  phone: string;
+
+  @Column({
+    type: 'varchar',
+    length: 80,
+  })
+  email: string;
+
+  @Column({
+    type: 'varchar',
+    length: 80,
+  })
+  birthDay: string;
+
+  @Column({
+    type: 'varchar',
+    length: 80,
+  })
+  address: string;
+
+  @Column({
+    type: 'varchar',
+    length: 80,
+  })
+  introduce: string;
+
+  @Column({
+    type: 'varchar',
     name: 'avatar_url',
     default: 'static/avatar_default/810727fdd6c178f4f3ac06be3c30657d.jpeg',
   })
@@ -57,13 +94,20 @@ export class User {
 
   @Column({
     type: 'enum',
+    enum: UserSex,
+    default: UserSex.MAN,
+  })
+  sex: UserSex;
+
+  @Column({
+    type: 'enum',
     enum: UserRole,
     default: UserRole.READERS,
   })
   role: UserRole;
 
   @CreateDateColumn()
-  currentAt: Date;
+  createAt: Date;
 
   @UpdateDateColumn()
   updateAt: Date;
@@ -79,4 +123,12 @@ export class User {
 
   @OneToMany(() => Comment, (comment) => comment.author)
   comments: Comment[];
+
+  @ManyToMany(() => Post, (post) => post.users)
+  @JoinTable({
+    name: 'post_user',
+    joinColumns: [{ name: 'user_id' }],
+    inverseJoinColumns: [{ name: 'post_id' }],
+  })
+  postss: Post[];
 }

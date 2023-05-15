@@ -17,12 +17,11 @@ import { RolesGuard } from 'src/auth/role.gurad';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('tag')
-@UseGuards(AuthGuard('jwt'), RolesGuard)
 export class TagController {
   constructor(private readonly tagService: TagService) {}
 
   @Post('/create')
-  @Role('admin', 'author', 'readers')
+  @Role('admin')
   create(@Body() createTagDto: CreateTagDto) {
     return this.tagService.create(createTagDto);
   }
@@ -31,6 +30,25 @@ export class TagController {
   @Role('admin', 'author', 'readers')
   list(@Query('page') page: number, @Query('size') size: number) {
     return this.tagService.list(page, size);
+  }
+
+  // 分页 标签
+  @Get('/pageList')
+  // 先给与所有角色权限
+  @Role('admin')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  findUserList(
+    @Query('page') currentPage: number,
+    @Query('size') size: number,
+    @Query('name') name: string,
+    @Query('introduce') introduce: string,
+  ) {
+    return this.tagService.findTagList(currentPage, size, name, introduce);
+  }
+
+  @Patch('/modify')
+  modify(@Body() updateTagDto: any) {
+    return this.tagService.modify(updateTagDto);
   }
 
   @Get('/findAll')

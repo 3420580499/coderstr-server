@@ -14,6 +14,7 @@ import {
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
+import getCommentsCount from 'utils/getCommentsCount';
 
 @Injectable()
 export class CommentService {
@@ -114,5 +115,17 @@ export class CommentService {
 
   remove(id: number) {
     return `This action removes a #${id} comment`;
+  }
+
+  // 返回指定文章列表的 评论总数
+  async getCommentsCount(ids: Array<any>) {
+    if (ids.length === 0) {
+      return 0;
+    }
+    console.log(ids);
+    return this.commentRepository
+      .createQueryBuilder('comment')
+      .where('comment.post_id in (:...postIds)', { postIds: ids })
+      .getCount();
   }
 }

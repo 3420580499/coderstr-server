@@ -14,7 +14,7 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const { username } = createUserDto;
+    const { username, nickname } = createUserDto;
     const isExists = await this.userRepository.findOne({
       where: { username },
     });
@@ -41,16 +41,78 @@ export class UserService {
     return `This action returns all user`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findCount(username: string, role: string) {
+    const queryBuilder = this.userRepository.createQueryBuilder('user');
+    if (username) {
+      queryBuilder.where('user.username LIKE :username', {
+        username: `%${username}%`,
+      });
+    }
+    if (role) {
+      queryBuilder.andWhere('user.role=:role', {
+        role,
+      });
+    }
+    return await queryBuilder.getCount();
   }
 
-  async update(id: number, updateUserDto: any) {
+  findOne(id: string) {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id=:id', { id })
+      .getOne();
+  }
+
+  async update(id: string, updateUserDto: any) {
     const user = this.userRepository.create({ ...updateUserDto, id });
+    return await this.userRepository.save(user);
+  }
+
+  async modify(updateUserDto: any) {
+    const user = this.userRepository.create({ ...updateUserDto });
     return await this.userRepository.save(user);
   }
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async findUserList(
+    currentPage: number,
+    size: number,
+    username: string,
+    role: string,
+  ) {
+    const queryBuilder = this.userRepository
+      .createQueryBuilder('user')
+      .select([
+        'user.id',
+        'user.address',
+        'user.birthDay',
+        'user.email',
+        'user.introduce',
+        'user.nickname',
+        'user.phone',
+        'user.role',
+        'user.sex',
+        'user.username',
+      ]);
+    if (username) {
+      queryBuilder.andWhere('user.username LIKE :username', {
+        username: `%${username}%`,
+      });
+    }
+    if (role) {
+      queryBuilder.andWhere('user.role=:role', {
+        role,
+      });
+    }
+    return {
+      total: await this.findCount(username, role),
+      list: await queryBuilder
+        .skip((currentPage - 1) * size)
+        .take(size)
+        .getMany(),
+    };
   }
 }

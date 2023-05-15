@@ -10,4 +10,9 @@ export class CreateUserDto {
     message: '密码不能为空',
   })
   password: string;
+
+  @IsNotEmpty({
+    message: '昵称不能为空',
+  })
+  nickname: string;
 }

@@ -20,6 +20,12 @@ export class Tag {
   @Column()
   name: string;
 
+  @Column({
+    type: 'varchar',
+    length: 500,
+  })
+  introduce: string;
+
   @ManyToMany(() => Post, (post) => post.tags)
   posts: Post[];
 

@@ -20,6 +20,12 @@ export class Sort {
   })
   name: string;
 
+  @Column({
+    type: 'varchar',
+    length: 300,
+  })
+  introduce: string;
+
   @OneToMany(() => Post, (post) => post.sort)
   posts: Post[];
 

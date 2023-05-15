@@ -32,7 +32,7 @@ export class UploadController {
   @Post('postsDetailImg')
   @UseInterceptors(FileInterceptor('file'))
   uploadFileOfPostsDetailImg(@UploadedFile() file) {
-    const path = `static/${file.filename}`;
+    const path = `static/post/detail/${file.filename}`;
     return path;
   }
 
@@ -41,7 +41,7 @@ export class UploadController {
   @UseInterceptors(FileInterceptor('file'))
   uploadFilePostsCoverImg(@UploadedFile() file, @Req() req) {
     // 建立用户id的目录
-    const path = `static/${file.filename}`;
+    const path = `static/post/cover/${file.filename}`;
     // 这里不添加到数据库（不创建新的记录，而是只保存文件）（如果创建到数据库会造成很多条数据存放（用户一直上传图片））
     // this.postsService.create({ coverImg: path }, req.user);
     return path;
@@ -51,7 +51,7 @@ export class UploadController {
   @Post('/updateUserImg')
   @UseInterceptors(FileInterceptor('file'))
   async updateUserImg(@UploadedFile() file, @Req() req) {
-    const path = `static/${file.filename}`;
+    const path = `static/avatar/${file.filename}`;
     const result = await this.userService.update(req.user.id, {
       avatarUrl: path,
     });

@@ -27,17 +27,60 @@ export class SortService {
       .getOne();
   }
 
-  async update(id: number, updateSortDto: any) {
+  async update(updateSortDto: any) {
     await this.sortRepository
       .createQueryBuilder()
-      .update()
+      .update(Sort)
       .set({
         name: updateSortDto.name,
+        introduce: updateSortDto.introduce,
       })
+      .where('id = :id', { id: updateSortDto.id })
       .execute();
   }
 
   remove(id: number) {
     return `This action removes a #${id} sort`;
+  }
+
+  async findCount(name: string, introduce: string) {
+    const queryBuilder = this.sortRepository.createQueryBuilder('sort');
+    if (name) {
+      queryBuilder.andWhere('sort.name LIKE :name', {
+        name: `%${name}%`,
+      });
+    }
+    if (introduce) {
+      queryBuilder.andWhere('sort.introduce LIKE :introduce', {
+        introduce: `%${introduce}%`,
+      });
+    }
+    return await queryBuilder.getCount();
+  }
+
+  async findSortList(
+    currentPage: number,
+    size: number,
+    name: string,
+    introduce: string,
+  ) {
+    const queryBuilder = this.sortRepository.createQueryBuilder('sort');
+    if (name) {
+      queryBuilder.andWhere('sort.name LIKE :name', {
+        name: `%${name}%`,
+      });
+    }
+    if (introduce) {
+      queryBuilder.andWhere('sort.introduce LIKE :introduce', {
+        introduce: `%${introduce}%`,
+      });
+    }
+    return {
+      total: await this.findCount(name, introduce),
+      list: await queryBuilder
+        .skip((currentPage - 1) * size)
+        .take(size)
+        .getMany(),
+    };
   }
 }
